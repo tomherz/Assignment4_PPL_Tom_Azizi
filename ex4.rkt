@@ -51,11 +51,15 @@
 ;;Type: [Number * Number -> LzlList<Pair<Number,Number>>
 ;;Pre-condition: init =/= 0
 ;;Tests: (take (sqrt-lzl 2 1) 3) →  '((1 . 1) (3/2 . 1/4) (17/12 . 1/144)) 
-(define sqrt-lzl 
+(define sqrt-lzl
   (lambda (x init)
-   @TODO
-  )
-)  
+  ;; implementing helper method for current iteration
+    (letrec ((sqrt-lzl-iter 
+              (lambda (guess)
+                (let ((accuracy (abs (- (* guess guess) x))))
+                  (cons-lzl (cons guess accuracy)
+                            (lambda () (sqrt-lzl-iter (improve guess x))))))))
+      (sqrt-lzl-iter init))))
 
 ;;Signature: find-first(lzlst, p)
 ;;Purpose: Return the first item in the given lazy list which satisfies the given predicate. If no such item exists return 'fail.
@@ -64,10 +68,12 @@
 ;;Tests: (find-first (integers-from 1) (lambda (x) (> x 10))) --> 11; (find-first (cons-lzl 1 (lambda() (cons-lzl 2 (lambda () '())))) (lambda (x) (> x 10))) --> 'fail
 
 (define find-first
-  (lambda (lz-lst p)
-   @TODO
-  )
-)
+  (lambda (lzlst p)
+    (if (empty-lzl? lzlst)
+        'fail
+        (if (p (head lzlst))
+            (head lzlst)
+            (find-first (tail lzlst) p)))))
 
 ;;Signature: sqrt2(x,init,epsilon)
 ;;Purpose: return approximation of the square root of the given number x, according to Newton method, starting from init guess with epsilon threshold.  The procedure uses sqrt-lzl and find-first procedures.
@@ -76,9 +82,9 @@
 ;;Tests: (sqrt2 2 1 0.0001) → 1 169/408
 (define sqrt2
   (lambda (x init epsilon)
-   @TODO
-  )
-)
+    (let ((target-pair (find-first (sqrt-lzl x init)
+                                   (lambda (pair) (< (cdr pair) epsilon)))))
+      (car target-pair))))
 
 
 ;;;; Q2
