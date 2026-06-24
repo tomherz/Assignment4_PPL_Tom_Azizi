@@ -1,4 +1,4 @@
-### PPL - Assignment 4: Theoretical Questions
+# PPL - Assignment 4: Theoretical Questions
 
 ## Question 1 - Lazy lists
 
@@ -71,3 +71,68 @@ We prove that get-value ($f$) and get-value$ ($f_{sfc}$) are equivalent accordin
      * By the induction hypothesis, these remaining computations are equivalent.
 
 Note: Since both procedures match perfectly on the base case, align on immediate matches, and synchronously delegate to the tail when a key mismatch occurs, they are structurally equivalent for any input.
+
+## Question 3 - Logic programming
+
+
+### 1. unify [t(s(s), G, s, p, t(K), s), t(s(G), G, s, p, t(K), U)]
+* **Algorithm Steps:**
+  1. The outer functor t is identical on both sides, so we proceed to compare the arguments from left to right.
+  2. Argument 1: Compare s(s) with s(G). The functor s is identical, so we compare their inner components: the constant s against the variable G. This results in the substitution: G = s.
+  3. Argument 2: Compare variable G with variable G. Since we substituted G = s, this reduces to comparing s with s, which matches perfectly.
+  4. Argument 3: Constant s against constant s – identical.
+  5. Argument 4: Constant p against constant p – identical.
+  6. Argument 5: Expression t(K) against t(K) – completely identical.
+  7. Argument 6: Compare constant s with variable U. This results in the substitution: U = s.
+
+* **Result:** Success.
+* **Substitutions Found:** G = s, U = s.
+
+---
+
+### 2. unify [g(1, M, g, G, U, g, v(M)), g(1, v(U), g, v(M), v(G), g, v(M))]
+* **Algorithm Steps:**
+  1. The outer functor g is identical on both sides, so we compare argument-by-argument.
+  2. Argument 1: Constant 1 against 1 – identical.
+  3. Argument 2: Variable M against structure v(U). Since M does not appear inside the structure, this is a valid substitution: M = v(U).
+  4. Argument 3: Constant g against constant g – identical.
+  5. Argument 4: Variable G against structure v(M). We substitute the value of M found in step 3 (M = v(U)) and get the substitution: G = v(v(U)).
+  6. Argument 5: Variable U against structure v(G). We substitute the value of G found in step 5 (G = v(v(U))) and get the equation: U = v(v(v(U))).
+  7. Occurs Check: The algorithm detects that the variable U appears inside the structure it is being compared to.
+
+* **Result:** Failure.
+* **Explanation:** Occurs Check Failure. A variable cannot be unified with a structure that contains itself, as it would create an infinite recursive structure.
+
+---
+
+### 3. unify [m(M,N), n(M,N)]
+* **Algorithm Steps:**
+  1. The algorithm first checks the outer functors of both expressions.
+  2. The left functor is m and the right functor is n.
+
+* **Result:** Failure.
+* **Explanation:** Functor Clash Failure. Functors with different names (m and n) cannot be unified.
+
+---
+
+### 4. unify [p([v | [V | VV]]), p([[v | V] | VV])]
+* **Algorithm Steps:**
+  1. The outer functor p is identical, so we move inside to compare the list arguments.
+  2. Compare the first element (Head) of both lists:
+     * In the left list, the first element is the atomic constant v.
+     * In the right list, the first element is itself a compound list: [v | V].
+  3. The algorithm attempts to unify the constant v with the list structure [v | V].
+
+* **Result:** Failure.
+* **Explanation:** Structure Clash Failure. An atomic constant (v) cannot be unified with a compound list structure ([v | V]).
+
+---
+
+### 5. unify [g([T]), g(T)]
+* **Algorithm Steps:**
+  1. The outer functor g is identical, so we compare the inner arguments.
+  2. We attempt to unify the list [T] (a list containing the variable T) with the variable T itself.
+  3. Occurs Check: The algorithm detects that the variable T is contained inside the list structure [T].
+
+* **Result:** Failure.
+* **Explanation:** Occurs Check Failure. The variable T is present inside the list we are trying to assign to it, making the unification impossible.
