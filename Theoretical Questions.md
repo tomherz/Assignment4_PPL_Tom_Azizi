@@ -45,3 +45,29 @@ The procedures $f$ and $f_{sfc}$ are equivalent if and only if for any input $x 
 
 2. **Failure Case:** If the original procedure fails and returns 'fail, the SFC version applies the fail continuation:
    $$\text{if } f(x) = '\text{fail} \implies f_{sfc}(x, succ, fail) = fail()$$
+
+
+### d. Equivalence proof for get-value and get-value$
+We prove that get-value ($f$) and get-value$ ($f_{sfc}$) are equivalent according to our definition by induction on the structure of assoc-list:
+
+1. **Base Case (Empty List):** If assoc-list is empty ('()), both procedures evaluate as follows:
+   * The original procedure returns the symbol 'fail: 
+     $$f(\text{'()}, \text{key}) = \text{'fail}$$
+   * The SFC version evaluates the fail continuation: 
+     $$f_{sfc}(\text{'()}, \text{key}, succ, fail) = fail()$$
+
+
+2. **Inductive Step (Non-Empty List):** Assuming equivalence holds for the rest of the list (cdr assoc-list), we evaluate the current step based on whether the key matches the current pair's key (caar assoc-list):
+   * **Case 1 - The key matches (key == caar assoc-list):**
+     * The original procedure succeeds and directly returns the corresponding value $v$: 
+       $$f(\text{assoc-list}, \text{key}) = \text{cdar assoc-list} = v$$
+     * The SFC version evaluates the succ continuation on that same value: 
+       $$f_{sfc}(\text{assoc-list}, \text{key}, succ, fail) = succ(\text{cdar assoc-list}) = succ(v)$$
+
+   * **Case 2 - The key does not match (key != caar assoc-list):**
+     * Both procedures bypass the current element and reduce directly to processing the tail of the list (cdr assoc-list):
+       $$f(\text{assoc-list}, \text{key}) = f(\text{cdr assoc-list}, \text{key})$$
+       $$f_{sfc}(\text{assoc-list}, \text{key}, succ, fail) = f_{sfc}(\text{cdr assoc-list}, \text{key}, succ, fail)$$
+     * By the induction hypothesis, these remaining computations are equivalent.
+
+Note: Since both procedures match perfectly on the base case, align on immediate matches, and synchronously delegate to the tail when a key mismatch occurs, they are structurally equivalent for any input.
