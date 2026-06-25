@@ -16,9 +16,9 @@ maximum_printing_depth(100).
 % Purpose: All elements in Sublist appear in List in the same order.
 % Precondition: List is fully instantiated (queries do not include variables in their second argument).
 
-
-
-
+sub_list([],[]).
+sub_list([Head | SubTail],[Head | Tail]) :- sub_list(SubTail,Tail). %if Subtail is a sublist of Tail then concating head to SubTail is a sub_list of concated Head to Tail
+sub_list(SubTail,[Head | Tail]) :- sub_list(SubTail,Tail). %if Subtail is a sub list of tail then he is also a sub list of head concated to tail
 
 % Signature: swap_list(List, InversedList)/2
 % Purpose: InversedList is the ‘mirror’ representation of List, i.e, each item in the list is recursively replaced with the item at the position, with refers to the beginning and the end of the list.   
