@@ -59,7 +59,10 @@
                 (let ((accuracy (abs (- (* guess guess) x))))
                   (cons-lzl (cons guess accuracy)
                             (lambda () (sqrt-lzl-iter (improve guess x))))))))
-      (sqrt-lzl-iter init))))
+      (sqrt-lzl-iter init)
+    )
+  )
+)
 
 ;;Signature: find-first(lzlst, p)
 ;;Purpose: Return the first item in the given lazy list which satisfies the given predicate. If no such item exists return 'fail.
@@ -73,7 +76,11 @@
         'fail
         (if (p (head lzlst))
             (head lzlst)
-            (find-first (tail lzlst) p)))))
+            (find-first (tail lzlst) p)
+        )
+    )
+  )
+)
 
 ;;Signature: sqrt2(x,init,epsilon)
 ;;Purpose: return approximation of the square root of the given number x, according to Newton method, starting from init guess with epsilon threshold.  The procedure uses sqrt-lzl and find-first procedures.
@@ -84,7 +91,10 @@
   (lambda (x init epsilon)
     (let ((target-pair (find-first (sqrt-lzl x init)
                                    (lambda (pair) (< (cdr pair) epsilon)))))
-      (car target-pair))))
+      (car target-pair)
+    )
+  )
+)
 
 
 ;;;; Q2
@@ -137,32 +147,27 @@
         (let ((val (get-value (car lists) key)))
           (if (eq? val 'fail)
               (collect-all-values-1 (cdr lists) key)
-              (cons val (collect-all-values-1 (cdr lists) key)))))))
+              (cons val (collect-all-values-1 (cdr lists) key)
+              )
+          )
+        )
+    )
+  )
+)
 
 (define collect-all-values-2
   (lambda (lists key)
-    (letrec (
-      (collect$ 
-        (lambda (lsts cont)
-          (if (empty? lsts)
-          (cont '())
-            (get-value$ (car lsts) key
-            ;; Success Continuation
-              (lambda (val)
-             (collect$ (cdr lsts)
-             (lambda (rest) 
-               (cont (cons val rest)))))
-                ;; Fail Continuation
-                (lambda ()
-                (collect$ (cdr lsts) cont)
-                )
-            )
-          )
+    (if (empty? lists)
+        '()
+        (get-value$ (car lists) key
+          ;; Success continuation
+          (lambda (val) 
+            (cons val (collect-all-values-2 (cdr lists) key)))
+          ;; Fail continuation
+          (lambda () 
+            (collect-all-values-2 (cdr lists) key)
         )
       )
     )
-(collect$ lists (lambda (x) x)))
   )
 )
-   
-   
